@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Icon/Web_Logo.png">
+    <title>Result View | Student Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="Assets/style.css">
+</head>
+
+<body data-bs-theme="dark">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="index.html">
+      <img src="Icon/Web_Logo.png" width="40" class="me-2">
+      Student Management
+    </a>
+
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="student_attendance.html">Student Attendance</a></li>
+        <li class="nav-item"><a class="nav-link" href="result_entry.html">Result Entry</a></li>
+        <li class="nav-item"><a class="nav-link active" href="result_view.html">Result View</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- RESULT VIEW PAGE -->
+<section class="py-5">
+  <div class="container">
+
+    <!-- SEARCH -->
+    <div class="d-flex justify-content-between mb-4">
+        <input type="text" id="searchResult" class="form-control w-50 search-input" placeholder="Search by name, class or roll...">
+    </div>
+
+    <!-- RESULT CARDS -->
+    <div id="resultContainer" class="row g-4">
+      <!-- Cards will load here -->
+    </div>
+
+  </div>
+</section>
+
+<script src="Assets/jquery.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="Assets/result_view.js"></script>
+
+</body>
+</html>
