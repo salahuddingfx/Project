@@ -4,7 +4,8 @@ $(function(){
     let students = [
         {first:"Salah Uddin", last:"Kader", class:"10", roll:"001", result:{}},
         {first:"Partha Protim", last:"Datta", class:"10", roll:"002", result:{}},
-        {first:"Rafi Bin", last:"Nur", class:"10", roll:"003", result:{}}
+        {first:"Rafi Bin", last:"Nur", class:"10", roll:"003", result:{}},
+        {first:"Rahat", last:"Nur", class:"10", roll:"004", result:{}}
     ];
 
     let selected = null;
@@ -50,6 +51,28 @@ $(function(){
     });
 
 
+    // FUNCTION TO GET PER-SUBJECT GPA
+    function subjectGPA(m) {
+        if(m < 33) return 0;
+        else if(m >= 80) return 5;
+        else if(m >= 70) return 4;
+        else if(m >= 60) return 3.5;
+        else if(m >= 50) return 3;
+        else if(m >= 40) return 2;
+        else if(m >= 33) return 1;
+    }
+
+    function finalGrade(gpa){
+        if(gpa == 5) return "A+";
+        else if(gpa >= 4) return "A";
+        else if(gpa >= 3.5) return "A-";
+        else if(gpa >= 3) return "B";
+        else if(gpa >= 2) return "C";
+        else if(gpa >= 1) return "D";
+        else return "F";
+    }
+
+
     // AUTO CALCULATE FUNCTION
     $(".markBox").on("input", function(){
 
@@ -61,26 +84,34 @@ $(function(){
         let rel = Number($("#sub_rel").val());
         let ssc = Number($("#sub_ssc").val());
 
+        let all = [ban, eng, math, sci, ict, rel, ssc];
+
+        // TOTAL
         let total = ban+eng+math+sci+ict+rel+ssc;
         $("#totalMarks").text(total);
 
-        // GPA
-        let gpa = (total / 7) / 20;
-        if(gpa > 5) gpa = 5;
+        // FAIL CHECK (ANY SUBJECT < 33)
+        let hasFail = all.some(m => m < 33);
 
-        $("#gpaValue").text(gpa.toFixed(2));
+        if(hasFail){
+            $("#gpaValue").text("0.00");
+            $("#gradeValue").text("F");
+            return;
+        }
 
-        // Grade
-        let grade = "F";
-        if(gpa == 5) grade = "A+";
-        else if(gpa >= 4) grade = "A";
-        else if(gpa >= 3.5) grade = "A-";
-        else if(gpa >= 3) grade = "B";
-        else if(gpa >= 2) grade = "C";
-        else if(gpa >= 1) grade = "D";
+        // PER SUBJECT GPA
+        let gpaList = all.map(m => subjectGPA(m));
 
-        $("#gradeValue").text(grade);
+        // AVERAGE GPA
+        let finalGpa = gpaList.reduce((a,b)=>a+b,0) / gpaList.length;
+        if(finalGpa > 5) finalGpa = 5;
+
+        $("#gpaValue").text(finalGpa.toFixed(2));
+
+        // FINAL GRADE
+        $("#gradeValue").text(finalGrade(finalGpa));
     });
+
 
 
     // SAVE RESULT
@@ -126,4 +157,3 @@ $(function(){
     });
 
 });
-
