@@ -1,62 +1,117 @@
-$(function(){
+$(document).ready(function () {
 
-    // SAMPLE STUDENT + RESULT DATA (Replace with real saved data)
-    let results = JSON.parse(localStorage.getItem("studentResults")) || [];
+    let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    function loadResults(filter="") {
+    function loadResults(filter = "") {
         filter = filter.toLowerCase();
         $("#resultContainer").empty();
 
-        results.forEach(st => {
+        let found = false;
 
-            let fullName = (st.first + " " + st.last).toLowerCase();
+        students.forEach((s) => {
 
-            if(
+            // Skip if no result saved
+            if (!s.result || !s.result.grade) return;
+
+            let fullName = (s.first + " " + s.last).toLowerCase();
+
+            if (
                 fullName.includes(filter) ||
-                st.class.includes(filter) ||
-                st.roll.includes(filter)
+                s.class.toLowerCase().includes(filter) ||
+                s.roll.toLowerCase().includes(filter)
             ) {
+                found = true;
+
                 $("#resultContainer").append(`
-                    <div class="col-md-4">
-                        <div class="result-card">
 
-                            <h5 class="result-title">${st.first} ${st.last}</h5>
-                            <p>Class: <strong>${st.class}</strong> | Roll: <strong>${st.roll}</strong></p>
+                <div class="col-md-4 result-wrapper">
+                    <div class="result-card">
 
-                            <hr>
+                        <h5 class="result-title">${s.first} ${s.last}</h5>
 
-                            <table class="result-table">
-                                <tr><td>Bangla:</td><td>${st.result.ban}</td></tr>
-                                <tr><td>English:</td><td>${st.result.eng}</td></tr>
-                                <tr><td>Math:</td><td>${st.result.math}</td></tr>
-                                <tr><td>Science:</td><td>${st.result.sci}</td></tr>
-                                <tr><td>ICT:</td><td>${st.result.ict}</td></tr>
-                                <tr><td>Religion:</td><td>${st.result.rel}</td></tr>
-                                <tr><td>Social Science:</td><td>${st.result.ssc}</td></tr>
-                            </table>
+                        <p><strong>Class:</strong> ${s.class}</p>
+                        <p><strong>Roll:</strong> ${s.roll}</p>
 
-                            <hr>
+                        <p><strong>Total Marks:</strong> ${s.result.total}</p>
+                        <p><strong>GPA:</strong> ${s.result.gpa}</p>
 
-                            <p><strong>Total:</strong> ${st.result.total}</p>
-                            <p><strong>GPA:</strong> ${st.result.gpa}</p>
-                            <span class="result-badge">${st.result.grade}</span>
+                        <span class="result-badge">${s.result.grade}</span>
 
+                        <hr>
+
+                        <p class="subject-line">
+                            <span>Bangla</span>
+                            <span>${s.result.sub_ban}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_ban}%"></div>
                         </div>
+
+                        <p class="subject-line">
+                            <span>English</span>
+                            <span>${s.result.sub_eng}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_eng}%"></div>
+                        </div>
+
+                        <p class="subject-line">
+                            <span>Math</span>
+                            <span>${s.result.sub_math}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_math}%"></div>
+                        </div>
+
+                        <p class="subject-line">
+                            <span>Science</span>
+                            <span>${s.result.sub_sci}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_sci}%"></div>
+                        </div>
+
+                        <p class="subject-line">
+                            <span>ICT</span>
+                            <span>${s.result.sub_ict}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_ict}%"></div>
+                        </div>
+
+                        <p class="subject-line">
+                            <span>Religion</span>
+                            <span>${s.result.sub_rel}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_rel}%"></div>
+                        </div>
+
+                        <p class="subject-line">
+                            <span>Social Science</span>
+                            <span>${s.result.sub_ssc}</span>
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width:${s.result.sub_ssc}%"></div>
+                        </div>
+
                     </div>
+                </div>
+
                 `);
             }
         });
 
-        if($("#resultContainer").children().length === 0){
-            $("#resultContainer").html(`<p class='text-center text-light'>No results found.</p>`);
+        if (!found) {
+            $("#resultContainer").html(`
+                <h4 class="text-center text-muted">No results found...</h4>
+            `);
         }
     }
 
-    loadResults();
-
-    // SEARCH
-    $("#searchResult").on("keyup", function(){
+    $("#searchResult").on("input", function () {
         loadResults($(this).val());
     });
 
+    loadResults();
 });
