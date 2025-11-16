@@ -1,411 +1,532 @@
+/* ===========================================================================
+   Final Cleaned & Merged style.css
+   - Theme: A (Glass Premium) + C (Hybrid Balanced)
+   - Fixed: broken comments, duplicate rules, hover glass leak, overflow leaks
+   - Use as a single stylesheet for all pages (home, attendance, result entry/view)
+   =========================================================================== */
+
 /* ========================
-   Global Styles
-=========================*/
+   Base / Global
+========================= */
+:root{
+  --bg:#0f0f17;
+  --glass-weak: rgba(255,255,255,0.04);
+  --glass-mid: rgba(255,255,255,0.06);
+  --glass-strong: rgba(255,255,255,0.10);
+  --accent-1: #0d6efd;
+  --accent-2: #6610f2;
+  --muted: #dcdcdc;
+  --success: #1dbf41;
+  --danger: #d93b3b;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
 body {
-    background: #0f0f17;
-    color: #fff;
-    font-family: "Poppins", sans-serif;
+  margin:0;
+  background: var(--bg);
+  color: #fff;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  animation: fadeIn .6s ease both;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* subtle page fade */
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
 /* ========================
-   Loader (10 seconds max)
-=========================*/
-#introLoader {
-    position: fixed;
-    inset: 0;
-    background: #0f0f17;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: hideLoader 10s forwards;
+   Loader
+========================= */
+#introLoader{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background: var(--bg);
+  z-index:99999;
+  pointer-events:none;
+  -webkit-font-smoothing:antialiased;
 }
+#introLoader h2{
+  margin-top:12px;
+  color: #cfcfcf;
+  font-weight:600;
+  font-size:16px;
+  pointer-events:none;
+}
+.spinner{
+  width:70px;height:70px;
+  border-radius:50%;
+  border:6px solid rgba(255,255,255,0.06);
+  border-top-color: var(--accent-1);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin{ to { transform:rotate(360deg) } }
 
-@keyframes hideLoader {
-    0%   { opacity: 1; visibility: visible; }
-    90%  { opacity: 1; }
-    100% { opacity: 0; visibility: hidden; }
-}
-
-.spinner {
-    width: 70px;
-    height: 70px;
-    border: 6px solid #444;
-    border-top-color: #0d6efd;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* ========================
+   Utility helpers
+========================= */
+.container, .container-fluid { --bs-gutter-x:1rem; }
+.text-muted { color: #bdbdbd; }
+.hidden { display:none !important; }
 
 /* ========================
    Navbar
-=========================*/
+========================= */
 .navbar {
-    background: rgba(255,255,255,0.07) !important;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
-
-.navbar-brand {
-    font-weight: 700;
-    letter-spacing: .5px;
-}
-
+.navbar-brand { font-weight:700; letter-spacing:.4px; color:#fff; }
 .nav-link {
-    font-weight: 500;
-    color: #fff !important;
-    position: relative;
-    transition: .3s;
-    padding: 8px 12px;
+  color:#fff !important;
+  font-weight:500;
+  padding:8px 12px;
+  position:relative;
+  transition: color .25s ease;
 }
-
-.nav-link:hover {
-    color: #0b6efd !important;
+.nav-link::after{
+  content:"";
+  position:absolute; left:0; bottom:-2px;
+  height:3px; width:0%;
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  border-radius:20px;
+  transition: width .28s cubic-bezier(.2,.9,.3,1);
 }
-
-/* underline animation */
-.nav-link::after {
-    content: "";
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 0%;
-    height: 3px;
-    background: #0d6efd;
-    border-radius: 20px;
-    transition: width .35s ease;
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-    width: 100%;
-}
+.nav-link:hover{ color: var(--accent-1) !important; }
+.nav-link:hover::after, .nav-link.active::after { width:100%; }
 
 /* ========================
-   Carousel
-=========================*/
+   Carousel / Hero
+========================= */
 .slider-img {
-    height: 500px;
-    object-fit: cover;
-    filter: brightness(70%);
+  height: 500px;
+  object-fit:cover;
+  width:100%;
+  filter: brightness(0.72);
 }
-
-.carousel-item {
-    position: relative;
+.carousel-item { position:relative; margin-bottom:48px; overflow:hidden; }
+.carousel-item::before{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.22), rgba(0,0,0,0.46));
+  pointer-events:none;
 }
+.carousel-caption { top:0; bottom:0; left:0; right:0; display:flex; align-items:center; }
 
-.carousel-item::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-}
-
+/* glass box (hero content) */
 .glass-box {
-    background: rgba(0,0,0,0.50);
-    padding: 25px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.20);
-    backdrop-filter: blur(12px);
-    animation: fadeUp .6s ease;
-    transition: .3s;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  padding:28px;
+  border-radius:18px;
+  max-width:560px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.55);
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+  color:#fff;
 }
+.glass-box h2{ font-size:26px; margin:0 0 8px 0; font-weight:700; line-height:1.05; }
+.glass-box p{ margin:0 0 12px 0; color: #e6e6e6; }
 
-.glass-box:hover {
-    border: 2px solid #0d6efd;
-    box-shadow: 0 0 12px #0d6efd;
-}
-
-.carousel-caption h2 {
-    color: #fff;
-    font-weight: 700;
-    text-shadow: 0 0 10px rgba(0,0,0,.7);
-}
-
-.carousel-caption p {
-    color: #e5e5e5;
-    text-shadow: 0 0 8px rgba(0,0,0,.6);
-}
-
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
+/* subtle hover */
+.glass-box:hover{
+  transform: translateY(-6px);
+  border-color: rgba(13,110,253,0.9);
+  box-shadow: 0 30px 70px rgba(13,110,253,0.06);
 }
 
 /* ========================
-   Buttons
-=========================*/
-.btn-gradient {
-    background: linear-gradient(135deg, #0d6efd, #6610f2);
-    color: #fff !important;
-    border: none;
-    border-radius: 50px;
-    padding: 8px 18px;
-    transition: .3s;
+   Buttons (primary gradient + variants)
+========================= */
+.btn-gradient{
+  display:inline-flex; align-items:center; gap:8px;
+  background: linear-gradient(135deg,var(--accent-1), var(--accent-2));
+  color:#fff !important;
+  border: none; padding:10px 16px; border-radius:999px;
+  font-weight:600; box-shadow: 0 8px 28px rgba(102,16,242,0.12);
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s;
 }
+.btn-gradient:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(102,16,242,0.14); }
+.btn-add{ min-width:150px; }
 
-.btn-gradient:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,.3);
-}
+/* utility small buttons used on hero */
+.btn-sm { padding:6px 10px; border-radius:8px; }
 
-.btn-add {
-    min-width: 140px;
-}
+/* action buttons */
+.btn-success { background: linear-gradient(90deg,var(--success), #17b84a) !important; color:#fff; border:none; }
+.btn-danger { background: linear-gradient(90deg,var(--danger), #f05454) !important; color:#fff; border:none; }
 
 /* ========================
-   Inputs
-=========================*/
-.search-input {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 50px;
-    border: none;
-    padding: 10px 20px;
-    width: 250px;
-    color: #fff;
-    transition: .3s;
+   Inputs / Forms
+========================= */
+.form-control {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  padding:10px 12px;
+  border-radius:10px;
+  transition: background .18s, box-shadow .18s, border-color .18s;
+}
+.form-control::placeholder { color: #bfbfbf; opacity:0.9; }
+.form-control:focus{
+  background: rgba(255,255,255,0.05);
+  box-shadow: 0 8px 30px rgba(13,110,253,0.08);
+  outline: none;
+  border-color: rgba(13,110,253,0.55);
 }
 
-.search-input::placeholder { color: #eaeaea; }
+/* smaller search inputs used in header/table filter */
+.search-input { border-radius:50px; width:250px; padding:10px 18px; }
+@media(max-width:576px){ .search-input { width:100% } }
 
-.search-input:focus {
-    outline: none;
-    background: rgba(255,255,255,0.25);
-    box-shadow: 0 4px 20px rgba(0,0,0,.3);
-}
+/* numeric mark boxes */
+.markBox { border-radius:10px; }
 
 /* ========================
-   Table
-=========================*/
-.table-section { margin-top: 40px; }
-
-.glass-table {
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.12);
-}
-
-.table thead {
-    background: #111 !important;
-}
-
-/* ========================
-   Modal
-=========================*/
-.glass-modal {
-    background: rgba(0,0,0,0.65);
-    border-radius: 15px;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.bg-gradient {
-    background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-.list-group-item {
-    background: transparent;
-    color: #ddd;
-    border-color: rgba(255,255,255,0.1);
-}
-
-/* ========================
-   Attendance Sidebar
-=========================*/
+   Sidebar (Students list)
+========================= */
 .glass-sidebar {
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    height: 80vh;
-    overflow-y: auto;
-    backdrop-filter: blur(12px);
-    padding: 16px;
+  position:relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border-radius:18px;
+  padding:18px;
+  height:82vh;
+  overflow-y:auto;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  transition: box-shadow .25s ease, transform .25s ease;
+  -webkit-overflow-scrolling: touch;
+  background-clip: padding-box;
 }
 
-.glass-pane {
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    backdrop-filter: blur(12px);
-    padding: 20px;
-}
-
-.list-group-item.active {
-    background: linear-gradient(135deg, #0d6efd, #6610f2);
-    color: #fff !important;
-}
-
-/* ========================
-   Responsive
-=========================*/
-@media (max-width:576px) {
-    .search-input,
-    .btn-add { width: 100%; }
-}
-
-/* ============= SIDEBAR ============= */
-.glass-sidebar {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 4px 25px rgba(0,0,0,0.3);
-    height: 82vh;
-    overflow-y: auto;
-    transition: .3s;
-}
-
-.glass-sidebar:hover {
-    box-shadow: 0 6px 30px rgba(0,0,0,0.4);
-}
-
-/* Student cards inside sidebar */
+/* list items */
 .student-item {
-    background: rgba(255,255,255,0.05);
-    color: #fff;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    padding: 12px 16px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: .3s;
+  display:block;
+  background: rgba(255,255,255,0.03);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:10px;
+  color:#fff;
+  border:1px solid transparent;
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+.student-item:hover{
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(13,110,253,0.22);
+}
+.student-item.active{
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  box-shadow: 0 20px 45px rgba(13,110,253,0.12);
+  color:#fff;
+  border-color: transparent;
 }
 
-.student-item:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(0, 136, 255, 0.5);
-    transform: translateY(-2px);
-}
+/* ensure no pseudo-elements cause extra glass: defensive */
+.glass-sidebar::before, .glass-sidebar::after { content:none !important; }
 
-.student-item.active {
-    background: linear-gradient(135deg, #0d6efd, #6610f2);
-    color: #fff;
-    border-color: transparent;
-}
-
-.search-input {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    border: none;
-    border-radius: 50px;
-    padding: 10px 18px;
-    color: #fff;
-    transition: .3s;
-}
-
-.search-input::placeholder {
-    color: #ccc;
-}
-
-.search-input:focus {
-    background: rgba(255,255,255,0.2);
-    box-shadow: 0 0 18px rgba(0, 136, 255, 0.4);
-    border: none;
-}
-
-
-/* ============= RIGHT DETAILS PANE ============= */
+/* ========================
+   Right Details Panel / Cards
+========================= */
 .glass-pane {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 25px;
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+  position:relative;
+  background: var(--glass-weak);
+  border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border-radius:20px;
+  padding:22px;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.48);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  overflow:hidden;
+  background-clip: padding-box;
+}
+.glass-pane:hover{ box-shadow: 0 28px 80px rgba(0,0,0,0.52); }
+
+/* result card */
+.result-card {
+  background: var(--glass-mid);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.06);
+  padding:18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.36);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.result-card:hover{ transform: translateY(-6px); box-shadow: 0 18px 50px rgba(0,0,0,0.46); }
+
+.result-title{ font-size:20px; font-weight:700; color:#fff;}
+.result-badge{
+  display:inline-block;
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  padding:6px 14px;
+  border-radius:999px;
+  color:#fff; font-weight:700;
 }
 
-.glass-pane h4 {
-    font-weight: 700;
-    letter-spacing: .5px;
-    color: #fff;
-}
-
-.glass-pane p {
-    font-size: 15px;
-    color: #e5e5e5;
-}
-
+/* ========================
+   Attendance list & controls
+========================= */
 #attendanceList .list-group-item {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 10px;
-    color: #ddd;
-    margin-bottom: 6px;
-    transition: .3s;
+  background: rgba(255,255,255,0.03);
+  color:#eaeaea;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.04);
+  margin-bottom:10px;
+  padding:10px 12px;
+  transition: transform .18s ease, background .18s ease;
 }
-
 #attendanceList .list-group-item:hover {
-    background: rgba(255,255,255,0.15);
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transform: translateX(6px);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.32);
 }
 
-#markPresent, #markAbsent {
-    padding: 10px 22px;
-    font-weight: 600;
-    border-radius: 50px;
-    transition: .3s;
+/* Present / Absent buttons styling override (consistent dark theme) */
+#markPresent, #markAbsent{
+  border-radius:10px;
+  padding:10px 20px;
+  font-weight:700;
+  border:none;
+}
+#markPresent{ background: linear-gradient(90deg,var(--success), #17b84a); color:#fff; }
+#markAbsent{ background: linear-gradient(90deg,var(--danger), #ff5a5a); color:#fff; }
+
+/* ========================
+   Table styles (Student Table)
+========================= */
+.table-section { margin-top:28px; }
+.glass-table {
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border-radius:14px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.45);
+  overflow:auto;
+}
+.table thead { background:#0b0b0b; color:#fff; }
+.table tbody tr { transition: background .15s, transform .15s; }
+.table tbody tr:hover { background: rgba(255,255,255,0.02); transform: translateY(-3px); }
+
+/* table controls, small screens */
+@media (max-width: 992px){
+  .glass-table { padding:12px; }
+  .slider-img { height:360px; }
 }
 
-#markPresent:hover {
-    box-shadow: 0 0 15px rgba(0,255,0,0.5);
-    transform: translateY(-2px);
+/* ========================
+   Result View Cards (grid)
+========================= */
+#resultContainer .card {
+  background: var(--glass-mid);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.04);
+  padding:16px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.42);
 }
 
-#markAbsent:hover {
-    box-shadow: 0 0 15px rgba(255,0,0,0.5);
-    transform: translateY(-2px);
+/* ========================
+   Footer
+========================= */
+.footer-glass{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.02));
+  border-top: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  padding:18px;
+  border-radius:18px 18px 0 0;
+  color:#dcdcdc;
+  margin-top:40px;
 }
 
-#attDate {
-    background: rgba(255,255,255,0.15);
-    border-radius: 10px;
-    border: none;
-    color: #fff;
-    padding: 8px 12px;
-    transition: .3s;
+/* social icons */
+.social-icons { display:flex; justify-content:center; gap:14px; }
+.social-link { color:#e6e6e6; font-size:20px; transition: transform .18s, color .18s; }
+.social-link:hover { color:var(--accent-1); transform: translateY(-4px); }
+
+/* time box & dev credit */
+.time-box { color: var(--accent-1); font-weight:700; }
+.dev-text { opacity:.84; font-size:14px; }
+
+/* ========================
+   Accessibility & focus
+========================= */
+a, button, input, select, textarea { outline-offset:3px; }
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  box-shadow: 0 6px 24px rgba(13,110,253,0.12);
 }
 
-#attDate:focus {
-    background: rgba(255,255,255,0.25);
-    box-shadow: 0 0 15px rgba(0, 136, 255, 0.35);
+/* ========================
+   Defensive fixes (glass leak / hover ghost)
+   - Prevent pseudo-element overlay leaks and stacking issues
+========================= */
+.glass-sidebar::before, .glass-pane::before,
+.glass-sidebar::after,  .glass-pane::after,
+.student-item::before, .result-card::before { content:none !important; }
+
+/* Prevent stacking multiple backdrops causing ghost layers */
+.glass-sidebar, .glass-pane, .result-card, .glass-table {
+  background-clip: padding-box;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
-body {
-    animation: fadeIn .7s ease;
+/* Ensure columns don't carry unexpected background */
+.col-md-3, .col-md-9, .col-md-4, .col-md-6 { background: transparent !important; }
+
+/* Limit hover brightening to avoid large gradient leaks */
+.glass-sidebar:hover { box-shadow: 0 18px 50px rgba(0,0,0,0.46); background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.02)); }
+.student-item:hover { background: rgba(255,255,255,0.06) !important; border-color: rgba(13,110,253,0.18) !important; }
+
+/* ========================
+   Responsive tweaks
+========================= */
+@media (max-width: 768px) {
+  .carousel-item { margin-bottom: 30px; }
+  .glass-sidebar { height: auto; max-height:60vh; padding:14px; }
+  .glass-pane { padding:18px; margin-top:18px; }
+  .slider-img { height: 360px; }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+/* ========================
+   Small UI niceties
+========================= */
+.result-badge, .btn-gradient, .student-item.active { transition: all .2s ease; }
+.small-muted { color:#bdbdbd; font-size:13px; }
+
+/* ========================
+   End of stylesheet
+========================= */
+.carousel-caption {
+    justify-content: center !important;
+    text-align: center !important;
+}
+.carousel-caption .glass-box {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+/* FIX: remove middle glass boundary line */
+.result-entry-page .row,
+.attendance-page .row {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.markBox {
-    background: rgba(255,255,255,0.12);
-    border: none;
-    color: #fff;
-    border-radius: 10px;
+.result-entry-page .col-md-3,
+.result-entry-page .col-md-9,
+.attendance-page .col-md-3,
+.attendance-page .col-md-9 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    background: transparent !important;
 }
 
-.markBox:focus {
-    background: rgba(255,255,255,0.2);
-    outline: none;
+/* Remove center shadow/glass overlap */
+.result-entry-page .glass-sidebar,
+.result-entry-page .glass-pane,
+.attendance-page .glass-sidebar,
+.attendance-page .glass-pane {
+    box-shadow: 0 0 0 rgba(0,0,0,0) !important;   /* remove outer stacking shadow */
+    border: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* Apply internal shadow only */
+.glass-sidebar,
+.glass-pane {
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.35) !important;
+}
+
+/* ------------------------------------
+   FINAL FIX: Prevent glass expanding on click / hover
+------------------------------------- */
+
+/* disable focus shadow on all buttons */
+.btn,
+button,
+.btn-gradient,
+.btn-success,
+.btn-danger {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* prevent click blur leak */
+.btn:focus,
+button:focus,
+.btn-gradient:focus,
+.btn-success:focus,
+.btn-danger:focus {
+    background-clip: padding-box !important;
+    backdrop-filter: none !important;
+}
+
+/* prevent hover glass expansion */
+.glass-pane:hover,
+.glass-sidebar:hover,
+.student-item:hover,
+.result-card:hover {
+    backdrop-filter: blur(14px) !important;
+    background: rgba(255,255,255,0.05) !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+}
+
+/* fix button active ghost glass */
+.btn:active,
+button:active {
+    transform: scale(.98);
+    background-clip: padding-box !important;
+    backdrop-filter: none !important;
+}
+
+/* remove any pseudo glitch */
+.glass-pane::before,
+.glass-sidebar::before,
+.student-item::before,
+.result-card::before,
+.btn::before,
+button::before {
+    content: none !important;
+}
+
+/* prevent box-shadow stacking on click */
+* {
+    box-shadow: none !important;
+}
+
+/* ============================
+   RESULT VIEW PAGE PREMIUM UI
+============================*/
+
+.result-wrapper {
+    animation: fadeIn .5s ease;
 }
 
 .result-card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
+    background: rgba(255,255,255,0.05) !important;
+    border-radius: 22px;
+    padding: 25px;
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    transition: .3s;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+    transition: .35s ease;
+    cursor: pointer;
 }
 
 .result-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.65);
+    background: rgba(255,255,255,0.08) !important;
 }
 
 .result-title {
@@ -415,52 +536,38 @@ body {
 
 .result-badge {
     background: linear-gradient(135deg, #0d6efd, #6610f2);
-    color: white;
-    padding: 6px 15px;
+    padding: 6px 16px;
     border-radius: 50px;
     font-weight: 600;
-}
-
-.result-table td {
-    color: #ddd !important;
-    padding: 6px 0;
-}
-
-.footer-glass {
-    background: rgba(255,255,255,0.05);
-    border-top: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
     color: #fff;
-    text-align: center;
-    border-radius: 25px 25px 0 0;
-}
-
-/* Social icons */
-.social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.social-link {
-    font-size: 22px;
-    color: #e0e0e0;
-    transition: .3s;
-}
-.social-link:hover {
-    color: #0d6efd;
-    transform: translateY(-3px);
-}
-
-/* Date & Time */
-.time-box {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0d6efd;
-}
-
-/* Developer credit */
-.dev-text {
     font-size: 14px;
-    opacity: .85;
+}
+
+/* Progress bars */
+.progress {
+    height: 8px;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #4e9fff, #8e44ff);
+    transition: width .5s ease;
+    border-radius: 30px;
+}
+
+/* Subject text */
+.subject-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: #e6e6e6;
+    font-size: 14px;
+}
+
+/* Smooth item fade */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
